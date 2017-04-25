@@ -12,8 +12,8 @@ CImage32::CImage32(char* file){
 		load(file);
 	}
 }
-CImage32::CImage32(const int w,const int h):m_buffer(NULL){Resize(w,h);}
-CImage32::CImage32():m_buffer(NULL){Resize(1,1);}
+CImage32::CImage32(const int w,const int h):CImage(w,h){}
+CImage32::CImage32():CImage(1,1){}
 CImage32::~CImage32(){Free();}
 void CImage32::Free(){
 	if(m_buffer != NULL)free(m_buffer);
@@ -43,18 +43,6 @@ DWORD CImage32::PixelGet(const int x,const int y) const{
 	return (ptr==NULL) ? 0:*ptr;
 }
 DWORD CImage32::PixelGetNC(const int x,const int y) const{return *(DWORD*)PixelAddress(x,y);}
-
-int CImage32::putcLittleEndian2(unsigned short int d, FILE *s){
-	putc(d & 0xFF, s);
-	return putc(d >> CHAR_BIT, s);
-}
-
-int CImage32::putcLittleEndian4(unsigned long d, FILE *s){
-	putc(d & 0xFF, s);
-	putc((d >> CHAR_BIT) & 0xFF, s);
-	putc((d >> CHAR_BIT * 2) & 0xFF, s);
-	return putc((d >> CHAR_BIT * 3) & 0xFF, s);
-}
 
 int CImage32::putBmpHeader(FILE *s, int x, int y, int c) {
 	unsigned long int bfOffBits=14 + 40;
@@ -119,6 +107,7 @@ void CImage32::load(const char* fname){
 	errno_t err;
 	if((err=fopen_s(&fin ,fname, "rb"))!=0){
 		perror(fname);
+		exit(1);
 		//MessageBox(GetActiveWindow(), fname, NULL, 0);
 		return;// exit(EXIT_FAILURE);
 	}

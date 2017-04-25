@@ -9,11 +9,11 @@ int min(int a,int b,int c){
 }
 
 
-BYTE* disision(BYTE* img,int w,int h){
+BYTE* disision(BYTE* img,int w,int h,int border){
 	BYTE* dest=(BYTE*)malloc(4*w*h*sizeof(BYTE));
-	tmp_max=0
-	cmax=0
-	th=0
+	int tmp_max=0;
+	int cmax=0;
+	int th=0;
 	for (int i=1;i<255;i++){
 		int ww=0;
 		int wb=0;
@@ -344,8 +344,25 @@ BYTE* gray(BYTE* img,int w,int h){
 	return dest;
 }
 
-int main(){
-	CImage32 src("saba.bmp");
+void gray(CImage32 *src){
+	BYTE* buf = (BYTE*)src->Buffer();
+	for(int y=0; y<src->Height(); y++){
+		for(int x=0; x<src->Width(); x++){
+			int tmp=0;
+			for(int i=0;i<3;i++){
+				tmp+=buf[4*y*src->Width()+4*x+i];
+			}
+			for(int i=0;i<3;i++){
+				buf[y*src->Width()*4+x*4+i]=tmp/3;
+			}
+			buf[y*src->Width()*4+x*4+3]=255;
+		}
+	}
+}
+
+
+int main(int argc, char *argv[]){
+	CImage32 src(argv[1]);
 	BYTE* buf=postarize((BYTE*)src.Buffer(),src.Width(),src.Height(),3);
 	BYTE* buf2=median(edge(buf,src.Width(),src.Height()),src.Width(),src.Height(),3);
 	src.SetBuffer(buf2);
