@@ -1,5 +1,5 @@
 #ifndef _IMG_H_
-#ifndef _IMG32_H_
+#ifndef _IMG_H_
 class CImage{
   
 };
