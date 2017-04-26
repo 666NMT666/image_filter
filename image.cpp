@@ -10,7 +10,7 @@ int min(int a,int b,int c){
 
 
 BYTE* disision(BYTE* img,int w,int h,int border){
-	BYTE* dest=(BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	int tmp_max=0;
 	int cmax=0;
 	int th=0;
@@ -21,13 +21,13 @@ BYTE* disision(BYTE* img,int w,int h,int border){
 		int mb=0;
 		for(int y=0; y<h; y++){
 			for(int x=0; x<w; x++){
-				for(int i=0;i<3;i++){
-					if (img[y*w*4+x*4+i] >border){
+				for(int j=0;j<3;j++){
+					if (img[y*w*4+x*4+j] >border){
 						ww=ww+1;
-						mw=mw+img[y*w*4+x*4+i];
+						mw=mw+img[y*w*4+x*4+j];
 					} else {
 						wb=wb+1;
-						mb=mb+img[y*w*4+x*4+i];
+						mb=mb+img[y*w*4+x*4+j];
 					}
 				}
 			}
@@ -53,7 +53,7 @@ BYTE* disision(BYTE* img,int w,int h,int border){
 BYTE* normalize(BYTE* img,int w,int h){
 	int minimum=255;
 	int maximum=0;
-	BYTE* dest=(BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			for (int i=0;i<3;i++){
@@ -66,7 +66,7 @@ BYTE* normalize(BYTE* img,int w,int h){
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			for (int i=0;i<3;i++){
-				dest[y*w*4+x*4+i]=255*(img[y*w*4+x*4+i]-minimum)/(maximum-minimum);
+				dest[y*w*4+x*4+i]=(BYTE)(255*(img[y*w*4+x*4+i]-minimum)/(maximum-minimum));
 			}
 		}
 	}
@@ -74,7 +74,7 @@ BYTE* normalize(BYTE* img,int w,int h){
 }
 
 BYTE* diff(BYTE* img1,BYTE* img2,int w,int h){
-	BYTE* dest=(BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			int tmps[3]={0,0,0};
@@ -84,7 +84,7 @@ BYTE* diff(BYTE* img1,BYTE* img2,int w,int h){
 			int tmp=min(tmps[0],tmps[1],tmps[2]);
 			if (tmp<0)tmp=0;
 			for (int i=0;i<3;i++){
-				dest[y*w*4+x*4+i]=tmp;
+				dest[y*w*4+x*4+i]=(BYTE)tmp;
 			}
 			dest[y*w*4+x*4+3]=255;
 		}
@@ -93,7 +93,7 @@ BYTE* diff(BYTE* img1,BYTE* img2,int w,int h){
 }
 
 BYTE* average(BYTE* img,int w,int h,int s){
-	BYTE* dest=(BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			for (int i=0;i<3;i++){
@@ -105,7 +105,7 @@ BYTE* average(BYTE* img,int w,int h,int s){
 						}
 					}
 				}
-				dest[y*w*4+x*4+i]=tmp/(s*s);
+				dest[y*w*4+x*4+i]=(BYTE)(tmp/(s*s));
 			}
 			dest[y*w*4+x*4+3]=255;
 		}
@@ -114,7 +114,7 @@ BYTE* average(BYTE* img,int w,int h,int s){
 }
 
 BYTE* laplace2(BYTE* img,int w,int h) {
-	BYTE* dest=(BYTE*)malloc(4*w*h*sizeof(BYTE));
+BYTE* dest=new BYTE[4*w*h];
 	for(int y=1; y<h-1; y++){
 		for(int x=1; x<w-1; x++){
 			int tmps[3]={0,0,0};
@@ -129,7 +129,7 @@ BYTE* laplace2(BYTE* img,int w,int h) {
 			int tmp = min(tmps[0],tmps[1],tmps[2]);
 			if (tmp<0) tmp=0;
 			for (int i=0;i<3;i++){
-				dest[y*w*4+x*4+i]=tmp;
+				dest[y*w*4+x*4+i]=(BYTE)tmp;
 			}
 			dest[y*w*4+x*4+3]=255;
 		}
@@ -138,7 +138,7 @@ BYTE* laplace2(BYTE* img,int w,int h) {
 }
 
 BYTE* min_filter(BYTE* img,int w,int h,int s){
-	BYTE* dest=(BYTE*)malloc(4*w*h*sizeof(BYTE));
+ BYTE* dest=new BYTE[4*w*h];
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			for (int i=0;i<3;i++){
@@ -148,7 +148,7 @@ BYTE* min_filter(BYTE* img,int w,int h,int s){
 						if (y2>=0 && y2 < h && x2>=0 && x2<w && tmp>img[y2*w*4+x2*4+i])tmp=img[y2*w*4+x2*4+i];
 					}
 				}
-				dest[y*w*4+x*4+i]=tmp;
+				dest[y*w*4+x*4+i]=(BYTE)tmp;
 			}
 			dest[y*w*4+x*4+3]=255;
 		}
@@ -157,7 +157,7 @@ BYTE* min_filter(BYTE* img,int w,int h,int s){
 }
 
 BYTE* max_filter(BYTE* img,int w,int h,int s){
-	BYTE* dest=(BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			for (int i=0;i<3;i++){
@@ -167,7 +167,7 @@ BYTE* max_filter(BYTE* img,int w,int h,int s){
 						if (y2>=0 && y2 < h && x2>=0 && x2<w && tmp<img[y2*w*4+x2*4+i])tmp=img[y2*w*4+x2*4+i];
 					}
 				}
-				dest[y*w*4+x*4+i]=tmp;
+				dest[y*w*4+x*4+i]=(BYTE)tmp;
 			}
 			dest[y*w*4+x*4+3]=255;
 		}
@@ -176,7 +176,7 @@ BYTE* max_filter(BYTE* img,int w,int h,int s){
 }
 
 BYTE* median(BYTE* img,int w,int h,int s){
-	BYTE* dest=(BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			for (int i=0;i<3;i++){
@@ -197,7 +197,7 @@ BYTE* median(BYTE* img,int w,int h,int s){
 						}
 					}
 				}
-				dest[y*w*4+x*4+i]=tmps[(s*s)/2];
+				dest[y*w*4+x*4+i]=(BYTE)tmps[(s*s)/2];
 				delete[] tmps;
 			}
 			dest[y*w*4+x*4+3]=255;
@@ -207,8 +207,8 @@ BYTE* median(BYTE* img,int w,int h,int s){
 }
 
 BYTE* edge(BYTE* img,int w,int h){
-	BYTE* dest = (BYTE*)malloc(4*w*h*sizeof(BYTE));
-	BYTE* dest2 = (BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
+	BYTE* dest2=new BYTE[4*w*h];
 
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
@@ -218,7 +218,7 @@ BYTE* edge(BYTE* img,int w,int h){
 			}
 			tmp=tmp/3;
 			for (int i=0;i<3;i++){
-				dest[y*w*3+x*3+i]=tmp;
+				dest[y*w*3+x*3+i]=(BYTE)tmp;
 			}
 		}
 	}
@@ -227,7 +227,7 @@ BYTE* edge(BYTE* img,int w,int h){
 			int tmp = 255-(int)(fabs(dest[y*w*3+(x-1)*3]+dest[y*w*3+(x+1)*3]+dest[(y-1)*w*3+x*3]+dest[(y+1)*w*3+x*3]-dest[y*w*3+x*3]*4));
 			if (tmp<0)tmp=0;
 			for (int i=0;i<3;i++){
-				dest2[y*w*4+x*4+i]=tmp;
+				dest2[y*w*4+x*4+i]=(BYTE)tmp;
 			}
 			dest2[y*w*4+x*4+3]=255;
 		}	
@@ -236,7 +236,7 @@ BYTE* edge(BYTE* img,int w,int h){
 }
 
 BYTE* hist(BYTE* img,int w,int h){
-	BYTE* dest = (BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	int hn[256][3];
 	int ehn[256][3];
 	for (int j=0;j<256;j++){
@@ -265,7 +265,7 @@ BYTE* hist(BYTE* img,int w,int h){
 		for(int x=0; x<w; x++){
 			for(int i=0;i<3;i++){
 				for(int j=0;j<256;j++){
-					if (j==img[4*y*w+4*x+i])dest[y*w*4+x*4+i]=ehn[j][i];
+					if (j==img[4*y*w+4*x+i])dest[y*w*4+x*4+i]=(BYTE)(ehn[j][i]);
 				}
 			}
 			dest[y*w*4+x*4+3]=255;
@@ -275,14 +275,14 @@ BYTE* hist(BYTE* img,int w,int h){
 }
 
 BYTE* contrast(BYTE* img,int w,int h,int a,int b){
-	BYTE* dest = (BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			for(int i=0;i<3;i++){
 				int tmp=img[4*y*w+4*x+i];
 				if (tmp<a)dest[y*w*4+x*4+i]=0;
 				else if (tmp>b)dest[y*w*4+x*4+i]=255;
-				else dest[y*w*4+x*4+i]=255*(tmp-a)/(b-a);
+				else dest[y*w*4+x*4+i]=(BYTE)(255*(tmp-a)/(b-a));
 			}
 			dest[y*w*4+x*4+3]=255;
 		}
@@ -291,7 +291,7 @@ BYTE* contrast(BYTE* img,int w,int h,int a,int b){
 }
 
 BYTE* postarize(BYTE* img,int w,int h,int q){
-	BYTE* dest = (BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			for(int i=0;i<3;i++){
@@ -303,7 +303,7 @@ BYTE* postarize(BYTE* img,int w,int h,int q){
 						tmp=(t1+t2)/2;
 					}
 				}
-				dest[y*w*4+x*4+i]=tmp;
+				dest[y*w*4+x*4+i]=(BYTE)tmp;
 			}
 			dest[y*w*4+x*4+3]=255;
 		}
@@ -312,14 +312,14 @@ BYTE* postarize(BYTE* img,int w,int h,int q){
 }
 
 BYTE* sola(BYTE* img,int w,int h){
-	BYTE* dest = (BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			for(int i=0;i<3;i++){
 				int tmp=img[4*y*w+4*x+i];
 				if (tmp<128) tmp=2*tmp;
 				else tmp=2*255-tmp*2;
-				dest[y*w*4+x*4+i]=tmp;
+				dest[y*w*4+x*4+i]=(BYTE)tmp;
 			}
 			dest[y*w*4+x*4+3]=255;
         }
@@ -328,7 +328,7 @@ BYTE* sola(BYTE* img,int w,int h){
 }
 
 BYTE* gray(BYTE* img,int w,int h){
-	BYTE* dest = (BYTE*)malloc(4*w*h*sizeof(BYTE));
+	BYTE* dest=new BYTE[4*w*h];
 	for(int y=0; y<h; y++){
 		for(int x=0; x<w; x++){
 			int tmp=0;
@@ -336,7 +336,7 @@ BYTE* gray(BYTE* img,int w,int h){
 				tmp+=img[4*y*w+4*x+i];
 			}
 			for(int i=0;i<3;i++){
-				dest[y*w*4+x*4+i]=tmp/3;
+				dest[y*w*4+x*4+i]=(BYTE)tmp/3;
 			}
 			dest[y*w*4+x*4+3]=255;
 		}
@@ -353,7 +353,7 @@ void gray(CImage32 *src){
 				tmp+=buf[4*y*src->Width()+4*x+i];
 			}
 			for(int i=0;i<3;i++){
-				buf[y*src->Width()*4+x*4+i]=tmp/3;
+				buf[y*src->Width()*4+x*4+i]=(BYTE)tmp/3;
 			}
 			buf[y*src->Width()*4+x*4+3]=255;
 		}

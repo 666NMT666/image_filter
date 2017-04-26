@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include "img32.h"
 
 #ifndef _IMG32_CPP_
@@ -50,14 +51,14 @@ int CImage32::putBmpHeader(FILE *s, int x, int y, int c) {
 	if (s == NULL || ferror(s)) { return 0; }
 	//BITMAP FILE HEADER(14byte)
 	fputs("BM", s);
-	putcLittleEndian4(bfOffBits + (unsigned long)x * y, s);
+	putcLittleEndian4(bfOffBits + (unsigned long)(x * y), s);
 	putcLittleEndian2(0, s);
 	putcLittleEndian2(0, s);
 	putcLittleEndian4(bfOffBits, s);
 
 	putcLittleEndian4(40,s); // biSize
-	putcLittleEndian4(x, s); // biWidth
-	putcLittleEndian4(y, s); // biHeight
+	putcLittleEndian4((unsigned long)x, s); // biWidth
+	putcLittleEndian4((unsigned long)y, s); // biHeight
 	putcLittleEndian2(1, s); // biPlanes
 	putcLittleEndian2(c, s); // biBitCount
 	putcLittleEndian4(0, s); // biCompression
@@ -74,8 +75,10 @@ void CImage32::save(const char* fname){
 	int imgsize=(m_width*4)*m_height;
 	BYTE *buf,*buf_top;
 	FILE* fp;
-	errno_t err;
+ 
+	errno err;
 	if ((err = fopen_s(&fp, fname, "wb")) != 0) { return; }
+
 
 	putBmpHeader(fp,m_width, m_height,32);
 	buf_top = buf = (BYTE*)malloc(imgsize);
@@ -97,7 +100,7 @@ void CImage32::save(const char* fname){
 	free(buf_top);
 	fclose(fp);
 }
-#include <windows.h>
+//#include <windows.h>
 // void CImage32::load(char* fname,TImageType t){}
 void CImage32::load(const char* fname){
 	FILE *fin;
