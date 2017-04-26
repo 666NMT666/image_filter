@@ -51,6 +51,31 @@ protected:
 		putc((d >> CHAR_BIT * 2) & 0xFF, s);
 		return putc((d >> CHAR_BIT * 3) & 0xFF, s);
 	}
+	int CImage32::putBmpHeader(FILE *s, int x, int y, int c) {
+		unsigned long int bfOffBits=14 + 40;
+		if (x <= 0 || y <= 0) { return 0; }
+		if (s == NULL || ferror(s)) { return 0; }
+		//BITMAP FILE HEADER(14byte)
+		fputs("BM", s);
+		putcLittleEndian4(bfOffBits + (unsigned long)(x * y), s);
+		putcLittleEndian2(0, s);
+		putcLittleEndian2(0, s);
+		putcLittleEndian4(bfOffBits, s);
+
+		putcLittleEndian4(40,s); // biSize
+		putcLittleEndian4((unsigned long)x, s); // biWidth
+		putcLittleEndian4((unsigned long)y, s); // biHeight
+		putcLittleEndian2(1, s); // biPlanes
+		putcLittleEndian2(c, s); // biBitCount
+		putcLittleEndian4(0, s); // biCompression
+		putcLittleEndian4(0, s); // biSizeImage
+		putcLittleEndian4(0, s); // biXPelsPerMeter
+		putcLittleEndian4(0, s); // biYPelsPerMeter
+		putcLittleEndian4(0, s); // biClrUsed
+		putcLittleEndian4(0, s); // biClrImportant
+		if (ferror(s)) { return 0; }
+		return 1;
+	}
 };
 
 class CImage8:public CImage{

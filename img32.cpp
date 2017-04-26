@@ -45,41 +45,18 @@ DWORD CImage32::PixelGet(const int x,const int y) const{
 }
 DWORD CImage32::PixelGetNC(const int x,const int y) const{return *(DWORD*)PixelAddress(x,y);}
 
-int CImage32::putBmpHeader(FILE *s, int x, int y, int c) {
-	unsigned long int bfOffBits=14 + 40;
-	if (x <= 0 || y <= 0) { return 0; }
-	if (s == NULL || ferror(s)) { return 0; }
-	//BITMAP FILE HEADER(14byte)
-	fputs("BM", s);
-	putcLittleEndian4(bfOffBits + (unsigned long)(x * y), s);
-	putcLittleEndian2(0, s);
-	putcLittleEndian2(0, s);
-	putcLittleEndian4(bfOffBits, s);
-
-	putcLittleEndian4(40,s); // biSize
-	putcLittleEndian4((unsigned long)x, s); // biWidth
-	putcLittleEndian4((unsigned long)y, s); // biHeight
-	putcLittleEndian2(1, s); // biPlanes
-	putcLittleEndian2(c, s); // biBitCount
-	putcLittleEndian4(0, s); // biCompression
-	putcLittleEndian4(0, s); // biSizeImage
-	putcLittleEndian4(0, s); // biXPelsPerMeter
-	putcLittleEndian4(0, s); // biYPelsPerMeter
-	putcLittleEndian4(0, s); // biClrUsed
-	putcLittleEndian4(0, s); // biClrImportant
-	if (ferror(s)) { return 0; }
-	return 1;
-}
-
 void CImage32::save(const char* fname){
 	int imgsize=(m_width*4)*m_height;
 	BYTE *buf,*buf_top;
 	FILE* fp;
- 
-	errno err;
+ 	
+ 	#ifndef fopen_s
+	if ((fp = fopen(fname, "wb")) == NULL) {return;}
+ 	#else
+	errno_t err;
 	if ((err = fopen_s(&fp, fname, "wb")) != 0) { return; }
-
-
+	#endif
+	
 	putBmpHeader(fp,m_width, m_height,32);
 	buf_top = buf = (BYTE*)malloc(imgsize);
 	if(buf_top == NULL) return;
@@ -107,13 +84,15 @@ void CImage32::load(const char* fname){
 	BYTE *p;
     WORD biBitCount;
 	DWORD dummy;
+	#ifndef fopen_s
+	if ((fin = fopen(fname, "rb")) == NULL) {exit(0);}
+	#else
 	errno_t err;
 	if((err=fopen_s(&fin ,fname, "rb"))!=0){
 		perror(fname);
 		exit(1);
-		//MessageBox(GetActiveWindow(), fname, NULL, 0);
-		return;// exit(EXIT_FAILURE);
 	}
+	#endif
 	//BITMAPFILEHEADER
 	fread(&dummy, sizeof(WORD), 1, fin);
 	fread(&dummy, sizeof(DWORD), 1, fin);

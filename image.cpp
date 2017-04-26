@@ -114,7 +114,7 @@ BYTE* average(BYTE* img,int w,int h,int s){
 }
 
 BYTE* laplace2(BYTE* img,int w,int h) {
-BYTE* dest=new BYTE[4*w*h];
+	BYTE* dest=new BYTE[4*w*h];
 	for(int y=1; y<h-1; y++){
 		for(int x=1; x<w-1; x++){
 			int tmps[3]={0,0,0};
