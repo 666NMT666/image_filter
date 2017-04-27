@@ -362,10 +362,12 @@ void gray(CImage32 *src){
 
 
 int main(int argc, char *argv[]){
+    char *fname="/sdcard/test.bmp";
+    if(argc!=1)fname=argv[1];
 	CImage32 src(argv[1]);
 	BYTE* buf=postarize((BYTE*)src.Buffer(),src.Width(),src.Height(),3);
 	BYTE* buf2=median(edge(buf,src.Width(),src.Height()),src.Width(),src.Height(),3);
 	src.SetBuffer(buf2);
-	src.save("pos-edge-median.bmp");
+	src.save("/sdcard/pos-edge.bmp");
 	return 0;
 }
